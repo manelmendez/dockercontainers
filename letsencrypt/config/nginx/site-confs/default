@@ -4,7 +4,7 @@
 server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	server_name _;
+	server_name matchanalyzer.duckdns.org;
 	return 301 https://$host$request_uri;
 }
 
@@ -13,7 +13,7 @@ server {
 	listen 443 ssl http2 default_server;
 	listen [::]:443 ssl http2 default_server;
 
-	server_name _;
+	server_name matchanalyzer.duckdns.org;
 
 	# enable subfolder method reverse proxy confs
 	#include /config/nginx/proxy-confs/*.subfolder.conf;
@@ -25,11 +25,13 @@ server {
 	#include /config/nginx/ldap.conf;
 
 	client_max_body_size 0;
-
+    #ip of the container
 	location / {
-		proxy_pass http://37.133.124.200:9009/;
-  	proxy_set_header X-Real-IP $remote_addr;
-  	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_pass http://192.168.1.138:9009/;
+  	    proxy_set_header Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Host $server_name;
 	}
 
 	#location ~ \.php$ {
